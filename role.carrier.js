@@ -2,77 +2,58 @@ module.exports = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        var err = 0;
-        
-        switch (creep.memory.state) {
+        var
+            err = 0,
+            state = creep.memory.state,
+            source = Game.getObjectById(creep.memory.sourceId),
+            target = Game.getObjectById(creep.memory.targetId);
+
+        switch (state) {
             case 'pickup':
-                err = this.pickup();
+                err = this.pickup(creep, source);
                 break;
             case 'withdraw':
-                err = this.withdraw();
+                err = this.withdraw(creep, source);
                 break;
             case 'transfer':
-                err = this.transfer();
+                err = this.transfer(creep, target);
                 break;
             default:
                 break;
         }
 
         switch (err) {
-            case value:
-                
+            case OK:
                 break;
-        
+            case ERR_NOT_IN_RANGE:
+                creep.moveTo(target);
+                break;
+
             default:
+                console.log(`Creep ${creep.name} had error ${err} when ${state}ing.`)
                 break;
         }
 
-
-
-
-        // when empty stop REFILL
-        if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.transfering = false;
-            creep.say('🔄 refill');
-        }
-
-
-
-        // when full go back to transfering
-        if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
-            creep.memory.transfering = true;
-            creep.say('⚡ transfer');
-        }
-
-        if (!creep.memory.transfering) {
-            var source = Game.getObjectById(creep.memory.sourceId);
-
-            // forget last target
-            creep.memory.targetId = '';
-
-            // find source with energy
-            if (!source || source.energy == 0) {
-                var sources = creep.room.find(FIND_SOURCES_ACTIVE);
-                var source = creep.pos.findClosestByPath(sources);
-
-                // save source.id to memory
-                if (source) {
-                    creep.memory.sourceId = source.id;
-                }
-            }
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
-            }
-        }
-        else {
-
-
-        }
     },
     findSource: function () {
+        // find source with energy
+        if (!source || source.energy == 0) {
+            var sources = creep.room.find(FIND_SOURCES_ACTIVE);
+            var source = creep.pos.findClosestByPath(sources);
 
+            // save source.id to memory
+            if (source) {
+                creep.memory.sourceId = source.id;
+            }
+        }
     },
-    refill: function () {
+    pickup: function (creep, source) {
+        creep.say('🔄 refill');
+        return creep.withdraw(source, RESOURCE_ENERGY);
+    },
+    withdraw: function (creep, source) {
+        creep.say('🔄 refill');
+        return creep.withdraw(source, RESOURCE_ENERGY);
 
     },
     findTarget: function () {
@@ -104,24 +85,6 @@ module.exports = {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        var target = Game.getObjectById(creep.memory.targetId);
-
-        // forget last source
-        creep.memory.sourceId = '';
-
-
         // save target to memory
         if (target) {
             creep.memory.targetId = target.id;
@@ -139,5 +102,6 @@ module.exports = {
                 creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
             }
         }
+        creep.say('⚡ transfer');
     }
 }
