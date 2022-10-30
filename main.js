@@ -6,9 +6,15 @@ var roles = {
     repairer: require('./role.repairer')
 }
 
+// TODO: memHack
+// TODO: Room Manager
+// TODO: Structure Manager
+
 module.exports.loop = function () {
     const ALL_CREEPS = Game.creeps;
 
+    // TODO: move to spawn.spawnNextCreep() also add spawnHarvester(), spawnWorker() 
+    //      and spawnCreepByRole(role) methods that will build bigger creeps automatically.
     // **************   AutoSpawn   *******************
     for (const key in Game.spawns) {
 
@@ -121,7 +127,7 @@ module.exports.loop = function () {
         }
     }
 
-
+// TODO: move to Creep Manager
     // Manage creeps
     for (const name in Memory.creeps) {
         const creep = Game.creeps[name]

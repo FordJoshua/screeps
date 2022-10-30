@@ -1,3 +1,6 @@
+// TODO: After carrier rewrite as a drop harvester that maintains container 
+//       and transfers to link
+
 module.exports = {
 
     /** @param {Creep} creep **/
